@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bicycle_dx
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # ── ここを追加：データベースが完全に準備完了したかを判定する ──
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bicycle_dx"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/bicycle_dx
+    depends_on:
+      # ── ここを変更：dbが「healthy」になるまでAPIの起動を待たせる ──
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
