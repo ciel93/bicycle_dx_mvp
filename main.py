@@ -12,7 +12,9 @@ from pydantic import BaseModel, Field
 # 日本時間（JST = UTC+9）の定義
 JST = timezone(timedelta(hours=9))
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@db:5432/bicycle_dx")
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("【構成エラー】環境変数 DATABASE_URL が設定されていません。")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
