@@ -534,7 +534,7 @@ def mock_checkout(
     receipt.payment_transaction_id = mock_charge_id
     receipt.paid_at = now_jst
 
-    # 決済完了したら「決済待ち」から「引き渡し待機」レーンへ昇格（遺品④）
+    # 決済完了したら「決済待ち」から「引き渡し待機」レーンへ昇格
     if receipt.status == ReceiptStatus.waiting_payment.value:
         receipt.lane_id = LaneLocation.waiting_delivery.value
 
