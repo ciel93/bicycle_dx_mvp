@@ -141,13 +141,13 @@ class Receipt(Base):
     # 完了通知
     notification_sent_at = Column(DateTime, nullable=True)
 
-    # 料金管理（遺品①）
+    # 料金管理
     base_fee = Column(Integer, nullable=False, default=0)
     parts_fee = Column(Integer, nullable=False, default=0)
     additional_fee = Column(Integer, nullable=False, default=0)
     total_fee = Column(Integer, nullable=False, default=0)
 
-    # 決済管理（遺品①）
+    # 決済管理
     payment_status = Column(String, nullable=False, default=PaymentStatus.unpaid.value)
     payment_method = Column(String, nullable=True)
     payment_transaction_id = Column(String, nullable=True)
@@ -301,7 +301,7 @@ def get_db():
         db.close()
 
 def recalculate_total_fee(db_receipt: Receipt):
-    """遺品②：合計金額の自動計算ロジック"""
+    """合計金額の自動計算ロジック"""
     db_receipt.total_fee = (db_receipt.base_fee or 0) + (db_receipt.parts_fee or 0) + (db_receipt.additional_fee or 0)
 
 def send_completion_notification_stub(receipt_id: int, customer_name: str, contact: str, tracking_token: str):
@@ -518,7 +518,7 @@ def mock_checkout(
     payload: CheckoutRequest,
     db: Session = Depends(get_db)
 ):
-    """遺品③＆④：Amazon Pay/Web決済モックAPI」"""
+    """Amazon Pay/Web決済モックAPI」"""
     receipt = db.query(Receipt).filter(Receipt.tracking_token == tracking_token).first()
     if not receipt:
         raise HTTPException(status_code=404, detail="伝票が見つかりません")
