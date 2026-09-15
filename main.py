@@ -454,7 +454,7 @@ def update_receipt(
                 )
                 db_item.notification_sent_at = datetime.now(JST).replace(tzinfo=None)
 
-    # 料金更新 ＆ 合計自動再計算（遺品②）
+    # 料金更新 ＆ 合計自動再計算
     if payload.base_fee is not None: db_item.base_fee = payload.base_fee
     if payload.parts_fee is not None: db_item.parts_fee = payload.parts_fee
     if payload.additional_fee is not None: db_item.additional_fee = payload.additional_fee
@@ -502,7 +502,7 @@ def update_receipt(
     return db_item
 
 
-# ── お客様用（公開）進捗照会＆モック決済 API（遺品③・④） ──
+# ── お客様用（公開）進捗照会＆モック決済 API ──
 
 @app.get("/public/track/{tracking_token}", response_model=PublicTrackResponse)
 def get_public_track(tracking_token: str, db: Session = Depends(get_db)):
